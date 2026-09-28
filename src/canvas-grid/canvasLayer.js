@@ -17,7 +17,10 @@ const NO_FLASH_EVENTS = new Set([
 
 const CSS = `
 .cg-active .ag-grid-viewport { flex: 0 0 auto !important; height: var(--cg-header-h, 48px) !important; overflow: hidden !important; }
-.cg-active .ag-grid-scrolling-rows, .cg-active .ag-grid-pinned-bottom-rows, .cg-active .ag-body-vertical-scroll { display: none !important; }
+.cg-active .ag-grid-scrolling-rows, .cg-active .ag-grid-pinned-bottom-rows { display: none !important; }
+/* The canvas has its own vertical scroller. AG Grid's must stay "visible" to checkVisibility(): when it is
+   display:none, every scroll sync queues a _waitUntil() retry whose destroy hook is never released (leak). */
+.cg-active .ag-body-vertical-scroll { opacity: 0 !important; pointer-events: none !important; width: 0 !important; min-width: 0 !important; }
 .cg-host { position: relative; flex: 1 1 0; min-height: 0; overflow: hidden; outline: none; }
 .cg-canvas { position: absolute; left: 0; top: 0; }
 .cg-scroller { position: absolute; inset: 0; overflow-x: hidden; overflow-y: auto; }
@@ -70,6 +73,8 @@ export class CanvasLayer {
     this.focus = null; // { rowIndex, colId }
     this.rangeEnd = null; // keyboard range extension end
     this.drag = null;
+    // Change-flash bookkeeping, keyed by `${rowId}|${colId}`. Both maps only ever hold cells drawn in the
+    // latest frame, so their size is bounded by the viewport, not by how far the user has scrolled.
     this.flashes = new Map();
     this.lastText = new Map();
     this.suppressFlash = true;
@@ -473,7 +478,7 @@ export class CanvasLayer {
     const findActive = (this.api.findGetTotalMatches?.() ?? 0) > 0 ? this.api.findGetActiveMatch() : null;
     const findOn = (this.api.findGetTotalMatches?.() ?? 0) > 0;
     const notesOn = !!this.api.getGridOption('notesDataSource');
-    const frame = { now: performance.now(), ranges, findOn, findActive, notesOn, flashing: false, section: null };
+    const frame = { now: performance.now(), ranges, findOn, findActive, notesOn, flashing: false, section: null, drawnText: new Map() };
     this.hitRegions = [];
 
     for (const section of L.sections) {
@@ -490,6 +495,11 @@ export class CanvasLayer {
     this.drawFillPreview();
 
     this.suppressFlash = false;
+    // Forget cells that left the viewport and flashes that finished (or scrolled away mid-flash).
+    this.lastText = frame.drawnText;
+    for (const [key, start] of this.flashes) {
+      if (frame.now - start >= FLASH_MS || !frame.drawnText.has(key)) this.flashes.delete(key);
+    }
     if (frame.flashing) this.requestDraw();
     this.stats.frames++;
     this.stats.lastDrawMs = performance.now() - t0;
@@ -571,7 +581,7 @@ export class CanvasLayer {
     if (colDef.enableCellChangeFlash) {
       const prev = this.lastText.get(key);
       if (prev !== undefined && prev !== text && !this.suppressFlash) this.flashes.set(key, frame.now);
-      this.lastText.set(key, text);
+      frame.drawnText.set(key, text);
     }
 
     if (style.backgroundColor) {
