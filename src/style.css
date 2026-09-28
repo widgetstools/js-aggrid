@@ -234,10 +234,18 @@ h1 {
 
 #grid-host .bench-grid {
   flex: 1;
-  min-height: 0;
+  /* Keep a usable grid however many result rows accumulate below it */
+  min-height: 360px;
+}
+
+.bench-results-wrap {
+  flex: none;
+  max-height: 180px;
+  overflow: auto;
 }
 
 .bench-results {
+  width: 100%;
   border-collapse: collapse;
   font-size: 13px;
   font-variant-numeric: tabular-nums;
@@ -259,6 +267,9 @@ h1 {
 }
 
 .bench-results th {
+  position: sticky;
+  top: 0;
+  background: var(--panel);
   color: var(--muted);
   font-weight: 500;
 }

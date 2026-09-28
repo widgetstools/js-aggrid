@@ -29,10 +29,10 @@ export function createBenchmarkDemo(container, { createGrid, renderer }) {
       <span class="bench-live"></span>
     </div>
     <div class="bench-grid"></div>
-    <table class="bench-results"><thead><tr>
+    <div class="bench-results-wrap"><table class="bench-results"><thead><tr>
       <th>Renderer</th><th>Rows</th><th>Updates/100ms</th><th>Scroll</th><th>Avg FPS</th><th>p95 frame</th>
       <th>Long tasks</th><th>Blocked ms</th><th>Grid DOM nodes</th>
-    </tr></thead><tbody></tbody></table>`;
+    </tr></thead><tbody></tbody></table></div>`;
 
   const $ = (sel) => container.querySelector(sel);
   const setting = (k) => $(`[data-k="${k}"]`);

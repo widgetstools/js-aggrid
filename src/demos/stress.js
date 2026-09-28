@@ -184,10 +184,10 @@ export function createStressDemo(container, { createGrid, renderer }) {
     </div>
     <div class="stress-stats"></div>
     <div class="bench-grid"></div>
-    <table class="bench-results"><thead><tr>
+    <div class="bench-results-wrap"><table class="bench-results"><thead><tr>
       <th>Renderer</th><th>Size</th><th>Updates</th><th>Scroll</th><th>Avg FPS</th><th>p95 frame</th>
       <th>Long tasks</th><th>Blocked ms</th><th>JS heap</th><th>Grid DOM nodes</th>
-    </tr></thead><tbody></tbody></table>`;
+    </tr></thead><tbody></tbody></table></div>`;
 
   const $ = (sel) => container.querySelector(sel);
   const setting = (k) => $(`[data-k="${k}"]`);
