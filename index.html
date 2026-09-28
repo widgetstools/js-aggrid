@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AG Grid Enterprise 36 Showcase</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <span class="logo">▦</span>
+        <div>
+          <h1>AG Grid Enterprise Showcase</h1>
+          <p class="subtitle">Vanilla JavaScript · <span id="version"></span></p>
+        </div>
+      </div>
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-demo="sales" role="tab">Sales Analytics</button>
+        <button class="tab" data-demo="formulas" role="tab">Formulas</button>
+        <button class="tab" data-demo="tree" role="tab">Tree Data</button>
+        <button class="tab" data-demo="benchmark" role="tab">Benchmark</button>
+        <button class="tab" data-demo="stress" role="tab">Stress 100k×400</button>
+      </nav>
+      <div class="renderer" role="radiogroup" aria-label="Cell renderer">
+        <span>Cells</span>
+        <button data-renderer="dom" role="radio">DOM</button>
+        <button data-renderer="canvas" role="radio">Canvas</button>
+      </div>
+      <button id="theme-toggle" class="ghost" title="Toggle dark mode">🌙 Dark</button>
+    </header>
+
+    <section class="hint" id="hint"></section>
+    <main id="grid-host"></main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
