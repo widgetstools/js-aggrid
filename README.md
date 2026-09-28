@@ -1,17 +1,66 @@
 # AG Grid Enterprise 36 Showcase (Vanilla JS)
 
-A Vite + plain JavaScript app demonstrating AG Grid Enterprise **v36.2.0**.
+A Vite + plain JavaScript app demonstrating AG Grid Enterprise **v36.2.0**, plus an experimental
+canvas-based cell renderer that runs the same grids with cells painted on a `<canvas>`.
+
+## Running the demo
+
+**Prerequisites:** Node.js `^20.19.0` or `>=22.12.0` (required by Vite 8) and npm. A Chromium-based browser
+(Chrome, Edge) is recommended — the benchmark's JS-heap and long-task stats use Chrome-only APIs.
 
 ```bash
+git clone https://github.com/widgetstools/js-aggrid.git
+cd js-aggrid
 npm install
 npm run dev
 ```
 
-To remove the trial watermark, add your key to `.env.local`:
+Open <http://localhost:5173>. The dev server reloads on file changes.
+
+To run a production build instead:
+
+```bash
+npm run build
+npm run preview
+```
+
+`npm run preview` serves the built `dist/` folder at <http://localhost:4173>.
+
+### AG Grid Enterprise license
+
+Without a key every Enterprise feature still works, but the grid shows a trial watermark and logs a license
+message in the console. To remove it, create `.env.local` in the project root (it is git-ignored):
 
 ```
 VITE_AG_GRID_LICENSE_KEY=your-key
 ```
+
+Restart `npm run dev` after adding it.
+
+### Using the app
+
+- **Tabs** switch between the demos described below.
+- **Cells: DOM / Canvas** (header, right) re-creates the current tab with the standard DOM renderer or the
+  canvas renderer. The choice is remembered in `localStorage`.
+- **Light / Dark** toggles the theme for the page, grid and charts.
+
+### Running the performance comparisons
+
+1. Open the **Benchmark** or **Stress 100k×400** tab.
+2. Pick **DOM** in the header, choose rows / updates / scroll options, and press **Run benchmark** /
+   **Measure 10s**.
+3. Switch to **Canvas** and run the same settings again. Results for both renderers stay in the table
+   (until the page is reloaded) for side-by-side comparison.
+
+Tips for meaningful numbers:
+
+- Keep the browser window visible and in the foreground. Background tabs and hidden panes throttle
+  `requestAnimationFrame`, which makes FPS readings meaningless.
+- FPS is capped at your display's refresh rate (60, 120 Hz…). When a renderer hits the cap, compare the
+  **p95 frame** time and **long tasks** instead.
+- The Stress tab auto-scrolls continuously while **Auto-scroll** is `vertical` / `diagonal`; set it to `off` to
+  interact with the grid by hand. **Live updates** keep streaming until set to `off`.
+- The 400-column Stress grid uses ~300 MB of JS heap; close other heavy tabs on low-memory machines.
 
 ## Demos
 
